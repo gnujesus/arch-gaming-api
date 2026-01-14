@@ -1,4 +1,4 @@
-package services
+package services 
 
 type GenericService[T any] interface {
 	GetAll() (T, error)

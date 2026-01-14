@@ -1,5 +1,7 @@
 package config
 
+import "database/sql"
+
 type AppConfig struct {
 	Port           string
 	DatabaseURL    string
@@ -7,4 +9,8 @@ type AppConfig struct {
 	AdminEmail     string
 	Environment    string
 	MaxRequestSize int64
+}
+
+func Load() AppConfig {
+	return AppConfig{}
 }
