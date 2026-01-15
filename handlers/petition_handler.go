@@ -7,18 +7,18 @@ import (
 )
 
 type PetitionHandler struct {
-	Service *services.PetitionService
-	Logger  log.Logger
+	Service services.PetitionService
+	Logger  *log.Logger
 }
 
-func NewPetitionHandler(s *services.PetitionService, l log.Logger) *PetitionHandler {
+func NewPetitionHandler(s services.PetitionService, l *log.Logger) *PetitionHandler {
 	return &PetitionHandler{
 		Service: s,
 		Logger:  l,
 	}
 }
 
-func (h *PetitionHandler) GetAllPetitions() {
+func (h *PetitionHandler) GetAllPetitions(w http.ResponseWriter, r *http.Request) {
 
 }
 

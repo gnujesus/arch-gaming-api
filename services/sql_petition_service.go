@@ -3,10 +3,12 @@ package services
 import (
 	"database/sql"
 	"github.com/gnujesus/arch-gaming-api/config"
+	"github.com/gnujesus/arch-gaming-api/interfaces/services"
 	"github.com/gnujesus/arch-gaming-api/models"
 )
 
 type SqlPetitionService struct {
+	services.PetitionService
 	DB     *sql.DB
 	Config *config.AppConfig
 }

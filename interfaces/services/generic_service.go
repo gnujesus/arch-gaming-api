@@ -1,8 +1,8 @@
-package services 
+package services
 
 type GenericService[T any] interface {
-	GetAll() (T, error)
+	GetAll() ([]T, error)
 	GetById(id string) (T, error)
-	Save() error
-	Delete() error
+	Save(T) error
+	Delete(id string) error
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/lib/pq"
 
@@ -29,22 +30,26 @@ func setupDatabase(dbUrl string) (*sql.DB, error) {
 }
 
 func main() {
-	logger := log.Logger()
+	logger := log.New(os.Stdout, "Log: ", log.Flags())
 
 	config := config.Load()
 
 	db, err := setupDatabase(config.DatabaseURL)
 
-	petitionService := services.SqlPetitionService()
+	if err != nil {
+		log.Fatal("Database setup error")
+	}
 
-	petitionHandler := handlers.NewPetitionHandler()
+	sqlPetitionService := services.NewSqlPetitionService(db, &config)
+
+	petitionHandler := handlers.NewPetitionHandler(sqlPetitionService, logger)
 
 	// --- Routes
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /games/petitions", requestHandler.SubmitGamePetition)
-	mux.HandleFunc("POST /games/petitions", requestHandler.SubmitGamePetition)
+	mux.HandleFunc("GET /games/petitions", petitionHandler.GetAllPetitions)
+	mux.HandleFunc("POST /games/petitions", petitionHandler.SubmitPetition)
 
 	// --- Serve
 
