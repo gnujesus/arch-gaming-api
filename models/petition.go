@@ -6,10 +6,16 @@ import "time"
 // each request has to wait 24 hours.
 
 type Petition struct {
-	ID        string
-	UserID    string // nullable, can be anonymous
-	GameID    string // fk ulid
-	Status    string // pending, received, testing, completed
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	ID     string `json:"id" db:"id"`
+	UserID string `json:"user_id" db:"user_id"`
+
+	// NOTE: ask claude
+	// UserID *string
+
+	GameID string `json:"game_id" db:"game_id"`
+	Status string `json:"status", db:"status"`
+
+	// never use string for dates, always time.Time
+	UpdatedAt time.Time `json:"updated_at db:"updated_at"`
+	CreatedAt time.Time `json:"created_at db:"created_at"`
 }
