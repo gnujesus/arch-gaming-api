@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: arch_gaming_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    # port mapping
+    # -----
+    # format - HOST_PORT:CONTAINER_PORT
+    # this to prevent any conflicts if there are other containers running on 5432
+    ports: 
+      - "5431:5432"
+
+    # data persistence
+    # -----
+    # if a container is stopped, the data will be erased unless persistence is specified
+    # under the volume section
+    # -----  
+    # Format: LOCAL_PATH:CONTAINER_PATH
+    # ./init-scripts = folder on YOUR computer (must be in same dir as this file)
+    # /docker-entrypoint-initdb.d = special folder PostgreSQL watches
+    # PostgreSQL runs all .sql and .sh files here on FIRST startup only
+    # Files run in alphabetical order (use 01-, 02- prefixes)
+    # Use this to auto-create tables when database first start
+    volumes:
+      - postgres_data:/var/lib/postgresql/data 
+      - ./init-scripts:/docker-entrypoint-initdb.d
+
+    # Put this container on a custom network
+    # Containers on same network can talk by service name
+    # API can connect to 'postgres:5432' instead of 'localhost:5432'
+    networks:
+      - arch_gaming_network
+
+# Declare named volumes used above
+# Docker manages where these are stored:
+#   Linux: /var/lib/docker/volumes/postgres_data
+#   Mac/Windows: Inside Docker's VM (abstracted)
+# Commands:
+#   docker volume ls - list all volumes
+#   docker volume inspect postgres_data - see details
+#   docker volume rm postgres_data - delete (careful!)
+volumes:
+  postgres_data:
+    # Empty = use Docker's default driver (local storage)
+
+# Declare custom networks used above
+# Bridge driver = standard Docker network
+#   - Containers can talk to each other by service name
+#   - Isolated from host network
+# Alternative drivers:
+#   host - Container uses host's network (no isolation)
+#   overlay - Multi-host networking (Docker Swarm/Kubernetes)
+networks:
+  arch_gaming_network:
+    driver: bridge
